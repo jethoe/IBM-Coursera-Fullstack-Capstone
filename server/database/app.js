@@ -1,8 +1,8 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const fs = require('fs');
-const  cors = require('cors')
-const app = express()
+const  cors = require('cors');
+const app = express();
 const port = 3030;
 
 app.use(cors())
@@ -13,23 +13,19 @@ const dealerships_data = JSON.parse(fs.readFileSync("dealerships.json", 'utf8'))
 
 mongoose.connect("mongodb://mongo_db:27017/",{'dbName':'dealershipsDB'});
 
-
 const Reviews = require('./review');
-
 const Dealerships = require('./dealership');
 
-try {
+try{
   Reviews.deleteMany({}).then(()=>{
     Reviews.insertMany(reviews_data['reviews']);
   });
   Dealerships.deleteMany({}).then(()=>{
     Dealerships.insertMany(dealerships_data['dealerships']);
   });
-  
-} catch (error) {
+} catch (error){
   res.status(500).json({ error: 'Error fetching documents' });
 }
-
 
 // Express route to home
 app.get('/', async (req, res) => {
@@ -48,7 +44,7 @@ app.get('/fetchReviews', async (req, res) => {
 
 // Express route to fetch reviews by a particular dealer
 app.get('/fetchReviews/dealer/:id', async (req, res) => {
-  try {
+  try{
     const documents = await Reviews.find({dealership: req.params.id});
     res.json(documents);
   } catch (error) {
@@ -68,22 +64,22 @@ app.get('/fetchDealers', async (req, res) => {
 
 // Express route to fetch Dealers by a particular state
 app.get('/fetchDealers/:state', async (req, res) => {
-  try {
+  try{
     const documents = await Dealerships.find({state: req.params.state});
     res.json(documents);
   } catch (error) {
-    res.status(500).json({ error: 'Error fetching documents' });
+    res.status(500).json({error: 'Error fetching documents'});
   }
 });
 
 // Express route to fetch dealer by a particular id
 app.get('/fetchDealer/:id', async (req, res) => {
-    try {
-        const documents = await Dealerships.find({id: req.params.id});
-        res.json(documents);
-      } catch (error) {
-        res.status(500).json({ error: 'Error fetching documents' });
-      }
+  try{
+      const documents = await Dealerships.find({id: req.params.id});
+      res.json(documents);
+  } catch (error) {
+    res.status(500).json({error: 'Error fetching documents'});
+  }
 });
 
 //Express route to insert review
